@@ -82,6 +82,14 @@ var Receiver = function( config ) {
 	 * @private
 	 */
 	this.ch_ = null;
+	
+	/**
+	 * prefetch count, prevent bunch of messages flooding in to memory issue.
+	 * @type {Number}
+	 * @private
+	 */
+	this.prefetchCount_ = config.receiverConfig.prefetchCound || 30;
+	
 	/**
 	 * exchange name
 	 * @type {string}
@@ -155,6 +163,10 @@ Receiver.prototype.bindQueue_ = function( qok ) {
 		});
 };
 
+Receiver.prototype.setPrefetchCnt_ = function() {
+	// the global is false by default
+	return this.ch_.prefetch(this.prefetchCount_, false);
+}
 
 /**
  * set up consume callback for amqp
@@ -231,6 +243,7 @@ Receiver.prototype.connect_ = function() {
 		.then( this.createChannel_ )
 		.then( this.handleChannelError_)
 		.then( this.createExchange_ )
+		.then( this.setPrefetchCnt_ )
 		.then( this.createQueue_ )
 		.then( this.bindQueue_ )
 		.then( this.consume_ )
