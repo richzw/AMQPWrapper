@@ -164,6 +164,14 @@ Sender.prototype.handleChannelClose_ = function() {
 }
 
 /**
+ * Ack message manually
+ * @public
+ */
+Sender.prototype.AckMessage = function(msg) {
+	return this.ch_.ack(msg);
+}
+
+/**
  * Handle amqp channel error.
  * @param {Object} ch Amqp channel
  * @private
